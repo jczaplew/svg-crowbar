@@ -1,5 +1,8 @@
 #SVG Crowbar
 
-A Chrome-specific bookmarklet that extracts SVG nodes and accompanying styles from an HTML document and downloads them as an SVG file—A file which you could open and edit in Adobe Illustrator, for instance. Because SVGs are resolution independent, it’s great for when you want to use web technologies to create documents that are meant to be printed (like, maybe on newsprint). It was created with [d3.js](http://d3js.org) in mind, but it should work fine with any SVG.
+A fork of [NYTimes SVG-Crowbar](http://nytimes.github.com/svg-crowbar/), this is a standalone client script instead of a Chrome-specific bookmarklet. Instead of bookmarking a script, it is loaded with the document and can be used to give the user the option to download a graphic. For more information, see the [original version](http://nytimes.github.com/svg-crowbar/). Requires [d3.js](http://d3js.org).
 
-[Project page](http://nytimes.github.com/svg-crowbar/)
+Check out [the example](http://jczaplew.github.io/svg-crowbar). Only works in Chrome and Firefox.
+
+## Usage
+````crowbar.getSvg("#targetSvg")```` or ````crowbar.getSvg(".targetSvg")````

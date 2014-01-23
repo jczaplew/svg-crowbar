@@ -1,155 +1,51 @@
+<!-- Via Mike Bostock http://bl.ocks.org/mbostock/4122298 -->
 <!DOCTYPE html>
 <head>
-  <meta charset='utf-8'>
-  <title>SVG Crowbar</title>
-  <link rel="stylesheet" type="text/css" href="assets/linked.css">
+  <meta charset="utf-8">
   <style>
 
-    /* Testing */
-    @import url("assets/imported.css");
+  path {
+    fill: #ccc;
+    stroke: #fff;
+    stroke-width: .5px;
+  }
 
-    svg {
-      border: solid 1px #ddd;
-    }
-
-    .internal {
-      fill: #f0f;
-    }
-
-    #svgs .dependency {
-      fill: #f0f;
-    }
-
-    svg text {
-      text-anchor: middle;
-      font-size: 16px;
-      font-family: Helvetica;
-    }
-
-    /* Page Styles */
-    body {
-      font-family: "Helvetica Neue", Helvetica, Arial;
-      width: 600px;
-      margin: 40px auto;
-      font-size: 15px;
-      line-height: 1.4em;
-    }
-
-    h3 {
-      font-size: 18px;
-      border-top: solid 1px #ddd;
-      padding: 20px 0 0 0;
-      margin: 20px 0 0 0;
-    }
-
-    p {
-      color: #333;
-    }
-
-    .note {
-      color: #999;
-    }
-
-    .bookmarklet {
-      padding: 3px 8px;
-      font-size: 12px;
-      font-weight: bold;
-      text-decoration: none;
-      border-radius: 1em;
-      background: #666;
-      color: white;
-    }
-
-    #svgs {
-      margin: 20px 0;
-    }
+  button {
+    position: absolute;
+    left: 560px;
+    top: 450px;
+  }
 
   </style>
 </head>
-
 <body>
-
-  <a href="https://github.com/NYTimes/svg-crowbar"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
-
-  <h1>SVG Crowbar</h1>
-  <p>A Chrome-specific bookmarklet that extracts SVG nodes and accompanying styles from an HTML document and downloads them as an SVG file—A file which you could open and edit in Adobe Illustrator, for instance. Because SVGs are resolution independent, it’s great for when you want to use web technologies to create documents that are meant to be printed (like, maybe on newsprint). It was created with <a href="http://d3js.org">d3.js</a> in mind, but it should work fine no matter how you choose to generate your SVG.</p>
-
-  <h3>The Bookmarklet</h3>
-  <p>
-    <a class="bookmarklet" href="javascript:javascript: (function () { var e = document.createElement('script'); if (window.location.protocol === 'https:') { e.setAttribute('src', 'https://raw.github.com/NYTimes/svg-crowbar/gh-pages/svg-crowbar.js'); } else { e.setAttribute('src', 'http://nytimes.github.com/svg-crowbar/svg-crowbar.js'); } e.setAttribute('class', 'svg-crowbar'); document.body.appendChild(e); })();">SVG Crowbar</a>&nbsp;
-    <span>← Drag this to your bookmarks bar.</span>
-  </p>
-  <p>After you’ve installed the bookmarklet, you can execute it on any page. Go ahead and try it out on this <a href="http://bl.ocks.org/mbostock/4458497">crazy map</a>.</p>
-  <p class="note">(You can click on the link instead to test it on this page immediately.)</p>
-
-  <h3>Notes</h3>
-  <p>Pixels will map to points when opening in Illustrator.</p>
-  <p>Dimensions of the document will be the same as the dimensions of your SVG node.</p>
-  <p>All colors are RGB, which is not ideal for print documents, but CMYK is not supported in SVG 1.1.</p>
-
-  <h3>Gotchas</h3>
-  <p>It only works in Chrome.</p>
-  <p>Currently the https version of the script is being served from raw.github.com, which might break in the future. If the script stops running on https pages, check back here—you might have to re-install the bookmarklet at that time.</p>
-  <p>Descendent ">" CSS selectors will crash Illustrator, therefore those styles are stripped out. Be warned.</p>
-  <p>Some styles won’t propogate down if they depend on markup outside of the svg element. For instance, if you use CSS that targets an SVG path element by an id on the div surrounding the SVG ("#map svg path") then those styles won’t show up in the resulting file. </p>
-
-  <h3>A Sample SVG</h3>
-  <div id="svgs"></div>
-
+  <button>Download SVG</button>
   <script src="http://d3js.org/d3.v3.min.js"></script>
-  <script type="text/javascript">
-    var width = 600,
-        height = 300;
+  <script src="http://d3js.org/topojson.v1.min.js"></script>
+  <script src="svg-crowbar.js"></script>
+  <script>
 
-    var svg = d3.select("#svgs").append("svg")
-       .attr("class", "first")
-       .attr("width", width)
-       .attr("height", height);
+  var width = 960,
+      height = 500;
 
-    svg.selectAll("circle")
-        .data(d3.range(20))
-      .enter().append("circle")
-        .attr("cx", width / 2)
-        .attr("cy", height / 2)
-        .attr("r", function(d) { return d * 20; })
-        .style("fill", "#0ff")
-        .style("fill-opacity", 0.01)
-        .style("stroke", "#0ff");
+  var path = d3.geo.path();
 
-    svg.selectAll(".bead")
-        .data(d3.range(600))
-      .enter().append("circle")
-        .attr("class", "bead")
-        .attr("cx", function(d) { return (d % 20) * (width / 19); })
-        .attr("cy", function(d) { return Math.floor(d / 20) * (height / 29); })
-        .attr("r", function(d) { return Math.random() * 10; })
-        .style("fill", "#0ff")
-        .style("fill-opacity", 0.4);
+  var svg = d3.select("body").append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .attr("id", "map");
 
-    svg.append("text")
-        .attr("class", "internal")
-        .attr("x", width / 2)
-        .attr("y", height / 5)
-        .text("Internal CSS, this text should be pink.");
+  d3.json("us.json", function(error, topology) {
+    svg.selectAll("path")
+        .data(topojson.feature(topology, topology.objects.counties).features)
+      .enter().append("path")
+        .attr("d", path);
+  });
 
-    svg.append("text")
-        .attr("class", "imported")
-        .attr("x", width / 2)
-        .attr("y", height / 5 * 2)
-        .text("Imported CSS, this text should be pink.");
-
-    svg.append("text")
-        .attr("class", "linked")
-        .attr("x", width / 2)
-        .attr("y", height / 5 * 3)
-        .text("Linked CSS, this text should be pink.");
-
-    svg.append("text")
-        .attr("class", "dependency")
-        .attr("x", width / 2)
-        .attr("y", height / 5 * 4)
-        .text("An HTML dependency, this text should be pink.");
+  d3.select("button").on("click", function() {
+    crowbar.getSvg("#map");
+  });
 
   </script>
-
-</body>
+  </body>
+</html>
